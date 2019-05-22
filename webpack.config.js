@@ -5,13 +5,14 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        main:'./src/index.js'
+        main:'./main.js'
     },
     mode:'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
+  devtool:'cheap-module-eval-source-map',
   module: {
     rules: [
       // ... other rules
@@ -25,6 +26,13 @@ module.exports = {
           'vue-style-loader',
           'css-loader',
           'stylus-loader'
+        ]
+      },
+      {
+        test:/\.css$/,
+        use:[
+          'style-loader',
+          'css-loader'
         ]
       },
       {
@@ -47,5 +55,19 @@ module.exports = {
     new HtmlWebpackPlugin({
         template:'./index.html'
     })
-  ]
+  ],
+  devServer: {
+    host: 'localhost',
+    open:true,
+    port:9000,
+    hot:true,
+    proxy:{
+      '/api':{
+        target:'http://localhost:9000',
+        pathRewrite:{
+          '^/api':'/static/mock'
+        }
+      }
+    }
+  }
 }
